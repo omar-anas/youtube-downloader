@@ -28,8 +28,9 @@ app.get('/info',async (req,res)=>{
 
 app.get('/download',(req,res)=>{
     const videoName = req.query.title;
-    console.log(videoName)   ;
-    res.set('Content-Disposition', 'attachment; filename=' +    videoName + '.mp3');
+    
+
+    res.set('Content-Disposition', 'attachment; filename='+encodeURI(videoName) +'.mp3');
    const videoURL = req.query.URL;
 
    
