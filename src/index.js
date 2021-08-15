@@ -3,7 +3,7 @@ const ytdl = require('ytdl-core');
 const fs =require('fs')
 const express = require('express');
 const app = express();
-const port = process.env.PORT|3000;
+const port = process.env.PORT||3000;
 const pass = path.join(__dirname,'../public');
 app.use(express.static(pass));
 app.use(express.json());
