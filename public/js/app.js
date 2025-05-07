@@ -7,6 +7,7 @@ $button.addEventListener('click',(e)=>{
     
     fetch(`/info?URL=${$input.value.trim()}`).then((response) =>{
         response.json().then((data)=>{
+            console.log(data);
             
 
             let detailsNodes = {
@@ -15,9 +16,9 @@ $button.addEventListener('click',(e)=>{
                 description:document.querySelector(".video-data .info p"),
             }
 				
-					detailsNodes.thumbnail.src = data.videoDetails.thumbnails[data.videoDetails.thumbnails.length - 1].url; // get HD thumbnail img
-					detailsNodes.title.innerText = data.videoDetails.title;
-					detailsNodes.description.innerText = data.videoDetails.description;
+					detailsNodes.thumbnail.src = data.thumbnail.url; // get HD thumbnail img
+					detailsNodes.title.innerText = data.title;
+					detailsNodes.description.innerText = data.description;
 
 					
                     document.querySelector('.footer').style.display = 'block';
