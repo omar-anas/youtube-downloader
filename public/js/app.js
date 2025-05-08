@@ -1,46 +1,62 @@
 const $button = document.querySelector('#get-video-info-btn');
-const $input  =  document.querySelector('#videoURL');
+const $input = document.querySelector('#videoURL');
 
-$button.addEventListener('click',(e)=>{
-    
+$button.addEventListener('click', (e) => {
+    if (!$input.value.trim()) {
+        alert('Please enter a valid YouTube URL');
+        return;
+    }
 
-    
-    fetch(`/info?URL=${$input.value.trim()}`).then((response) =>{
-        response.json().then((data)=>{
-            console.log(data);
-            
+    fetch(`/info?URL=${$input.value.trim()}`).then((response) => {
+        response.json().then((data) => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
 
             let detailsNodes = {
-                thumbnail:document.querySelector(".video-data .thumbnail img"),
-                title:document.querySelector(".video-data .info h2"),
-                description:document.querySelector(".video-data .info p"),
+                thumbnail: document.querySelector(".video-data .thumbnail img"),
+                title: document.querySelector(".video-data .info h2"),
+                description: document.querySelector(".video-data .info p"),
             }
-				
-					detailsNodes.thumbnail.src = data.thumbnail.url; // get HD thumbnail img
-					detailsNodes.title.innerText = data.title;
-					detailsNodes.description.innerText = data.description;
 
-					
-                    document.querySelector('.footer').style.display = 'block';
-					document.querySelector(".video-data").style.display = "block";
-					document.querySelector(".video-data").scrollIntoView({
-						behavior:"smooth"
-					});
+            // Add null checks and fallbacks for all data
+            if (detailsNodes.thumbnail) {
+                detailsNodes.thumbnail.src = data.thumbnail?.url || '';
+            }
+            if (detailsNodes.title) {
+                detailsNodes.title.innerText = data.title || 'Untitled';
+            }
+            if (detailsNodes.description) {
+                detailsNodes.description.innerText = data.description || 'No description available';
+            }
 
-                    document.querySelector("#download-btn").addEventListener("click",()=>{
-                        let videoURL = $input.value.trim();
-                        let title = detailsNodes.title.innerText
-                        window.open(`/download?URL=${videoURL}&title=${title}`);
-                    });
-        })
-    })
+            document.querySelector('.footer').style.display = 'block';
+            document.querySelector(".video-data").style.display = "block";
+            document.querySelector(".video-data").scrollIntoView({
+                behavior: "smooth"
+            });
 
-
-    
-
-
-    
-
+            const downloadBtn = document.querySelector("#download-btn");
+            if (downloadBtn) {
+                // Remove any existing event listeners
+                const newBtn = downloadBtn.cloneNode(true);
+                downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
+                
+                newBtn.addEventListener("click", () => {
+                    let videoURL = $input.value.trim();
+                    let title = data.title || 'download';
+                    window.open(`/download?URL=${encodeURIComponent(videoURL)}&title=${encodeURIComponent(title)}`);
+                });
+            }
+        }).catch(err => {
+            console.error('Error parsing response:', err);
+            alert('Failed to parse video information');
+        });
+    }).catch(err => {
+        console.error('Error fetching video info:', err);
+        alert('Failed to fetch video information');
+    });
 });
 
 

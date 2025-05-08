@@ -13,10 +13,21 @@ app.get('/info',async (req,res)=>{
     }
 
     const URL = req.query.URL;
+    
 
     try {
-        const info = await play.video_info(URL); // Use play.video_info
-        res.status(200).json(info.video_details); // Adjust response based on play-dl's info object
+        const info = await play.video_info(URL);
+        const videoDetails = info.video_details;
+        // Ensure consistent thumbnail format
+        const response = {
+            ...videoDetails,
+            thumbnail: {
+                url: videoDetails.thumbnails?.[0]?.url || videoDetails.thumbnail?.url || ''
+            },
+            title: videoDetails.title || '',
+            description: videoDetails.description || ''
+        };
+        res.status(200).json(response);
     } catch (error) {
         console.error("Error fetching info:", error);
         res.status(500).json({ error: 'Failed to fetch video info.' });
