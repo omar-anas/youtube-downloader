@@ -13,6 +13,8 @@ $button.addEventListener('click', (e) => {
                 alert(data.error);
                 return;
             }
+            console.log(data);
+            
 
             let detailsNodes = {
                 thumbnail: document.querySelector(".video-data .thumbnail img"),
